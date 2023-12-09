@@ -13,15 +13,12 @@ clock = pygame.time.Clock()
 
 # Colors
 black = pygame.Color(0, 0, 0)
+grey = pygame.Color(125, 125, 125)
 white = pygame.Color(255, 255, 255)
 
 gameRunning = True
 
-# poly = pygame.draw.polygon(screen, white, [(50, 50), (100, 100), (40, 40)])
-
-chessPieces = pygame.image.load(os.path.join('Utils\\Images\\chess', 'chessPieces.png'))
-chessPiecesC = chessPieces.convert_alpha()
-chessPiecesC.set_colorkey([255, 174, 201])
+# setup chess game
 chess = Chess(screen)
 
 while gameRunning:
@@ -30,13 +27,17 @@ while gameRunning:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_c:
+                print('starting a chess game...')
+                chess.run()
 
     # fill screen so nothing left from the last frame
-    screen.fill(black)
+    screen.fill(grey)
 
     # render Game
-    chess.update()
-    # screen.blit(chessPiecesC, [0, 0], [(0, 0), (50, 50)])
+
+
     # update screen
     pygame.display.flip()
 
