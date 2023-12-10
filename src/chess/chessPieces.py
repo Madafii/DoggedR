@@ -1,15 +1,15 @@
 import os
 import pygame.image
 from src.chess.chessPiece import ChessPiece
-from enum import Enum
+from src.chess.chessBoard import ChessBoard, ChessTile
+from src.chess.pieceType import PieceType
 
 
 class ChessPieces:
     colorkeyDefault = (255, 174, 201)  # colorkey is pink
 
     def __init__(self, filename):
-        self.pieceHeight = 50
-        self.pieceWidth = 50
+        self.pieceSize = 50
         self.chessPiecesImage = self.load_pieces_image(os.path.join('Utils\\Images\\chess', filename))
         self.chessPieces = self.load_pieces()
 
@@ -24,8 +24,10 @@ class ChessPieces:
         for i in range(0, 2):
             for j in range(0, 6):
                 pieces[PieceType(counter)] = ChessPiece(
-                    self.chessPiecesImage.subsurface(pygame.Rect(j * 50, i * 50, 50, 50)),
-                    [0, 0]
+                    self.chessPiecesImage.subsurface(pygame.rect.Rect(j * 50, i * 50, 50, 50)),
+                    pygame.rect.Rect(0, 0, 50, 50),
+                    (0, 0),
+                    PieceType(counter)
                 )
                 counter += 1
         return pieces
@@ -39,17 +41,15 @@ class ChessPieces:
     def get_pieces(self) -> dict:
         pass
 
-
-class PieceType(Enum):
-    WhitePawn = 0
-    WhiteKnight = 1
-    WhiteBishop = 2
-    WhiteRook = 3
-    WhiteKing = 4
-    WhiteQueen = 5
-    BlackPawn = 6
-    BlackKnight = 7
-    BlackBishop = 8
-    BlackRook = 9
-    BlackKing = 10
-    BlackQueen = 11
+    @staticmethod
+    def get_possible_moves(chesspiece: ChessPiece, chessboard: ChessBoard) -> list[ChessTile]:
+        possibleMoves: list[ChessTile] = list()
+        if chesspiece.pieceType == PieceType.WhitePawn:
+            x = chesspiece.posX
+            y = chesspiece.posY
+            if y == 1:
+                if chessboard.get_tile_at((x, y + 1)).occupied is None:
+                    possibleMoves.append(chessboard.get_tile_at((x, y + 1)))
+                if chessboard.get_tile_at((x, y + 2)).occupied is None:
+                    possibleMoves.append(chessboard.get_tile_at((x, y + 2)))
+        return possibleMoves

@@ -1,20 +1,22 @@
 from pygame.sprite import Sprite
 from pygame import Surface
+from pygame.rect import Rect
+from src.chess.pieceType import PieceType
 
 
 class ChessPiece(Sprite):
-    # cord (x, y)
-    def __init__(self, image: Surface, cord: list[int, int]):
+    def __init__(self, image: Surface, rect: Rect, pos: tuple[int, int], piecetype: PieceType):
         """
-
-        :param image:
-        :param cord: set cords to center of the tile
+        :param rect: the actual pixel props
+        :param pos: pos in form of (0, 0), (0, 1)...
         """
         super().__init__()
         self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.x = cord[0]
-        self.rect.y = cord[1]
+        self.rect = rect
+        self.pos = pos
+        self.posX = pos[0]
+        self.posY = pos[1]
+        self.pieceType = piecetype
 
     def draw(self, surface: Surface):
-        surface.blit(self.image, [self.rect.x - self.rect.width / 2, self.rect.y - self.rect.height / 2])
+        surface.blit(self.image, self.rect.topleft)
