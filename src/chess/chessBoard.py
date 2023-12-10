@@ -35,7 +35,7 @@ class ChessBoard:
         self.boardNumTiles = 8
         self.boardSize = self.tileSize * self.boardNumTiles
         self.boardRect = pygame.Rect(x - self.boardSize / 2, y - self.boardSize / 2, self.boardSize, self.boardSize)
-        self.boardTiles = Group()
+        self.boardTiles: Group[ChessTile] = Group()
         self.setup_board()
 
     def load_board_tiles(self, filename) -> Surface:
@@ -48,8 +48,8 @@ class ChessBoard:
             for j in range(0, self.boardNumTiles):
                 self.boardTiles.add(ChessTile(self.tileImage.subsurface(  # type: ignore
                     pygame.rect.Rect(0 + (i + j) % 2 * tileSize, 0, tileSize, tileSize)),
-                    pygame.rect.Rect(self.convert_coordinates_to_board(i, j).topleft, (tileSize, tileSize)),
-                    (i, j)))
+                    pygame.rect.Rect(self.convert_coordinates_to_board(j, i).topleft, (tileSize, tileSize)),
+                    (j, i)))
 
     def convert_coordinates_to_board(self, x, y) -> pygame.rect.Rect:
         """

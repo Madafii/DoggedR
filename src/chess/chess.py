@@ -27,54 +27,45 @@ class Chess(Sprite):
     def setup_default_chess_game(self, pieces: ChessPieces):
         # set coordinates (0, 0) = bottom, left (7, 7) = top, right
         # pieces all with same height and width for calculation of tope left position in a tile
-        pieceSize = pieces.chessPieces[PieceType.WhiteRook].image.get_rect().width
-        dist = pieceSize / 2
+        pieceSize = self.board.tileSize
         self.white_pieces.add(ChessPiece(pieces.chessPieces[PieceType.WhiteRook].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(0, 0).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(0, 0).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(0, 0).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (0, 0),
                                          PieceType.WhiteRook),
                               ChessPiece(pieces.chessPieces[PieceType.WhiteKnight].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(1, 0).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(1, 0).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(1, 0).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (1, 0),
                                          PieceType.WhiteKnight),
                               ChessPiece(self.pieces.chessPieces[PieceType.WhiteBishop].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(2, 0).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(2, 0).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(2, 0).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (2, 0),
                                          PieceType.WhiteBishop),
                               ChessPiece(self.pieces.chessPieces[PieceType.WhiteQueen].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(3, 0).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(3, 0).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(3, 0).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (3, 0),
                                          PieceType.WhiteQueen),
                               ChessPiece(self.pieces.chessPieces[PieceType.WhiteKing].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(4, 0).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(4, 0).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(4, 0).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (4, 0),
                                          PieceType.WhiteKing),
                               ChessPiece(self.pieces.chessPieces[PieceType.WhiteBishop].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(5, 0).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(5, 0).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(5, 0).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (5, 0),
                                          PieceType.WhiteBishop),
                               ChessPiece(self.pieces.chessPieces[PieceType.WhiteKnight].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(6, 0).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(6, 0).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(6, 0).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (6, 0),
                                          PieceType.WhiteKnight),
                               ChessPiece(self.pieces.chessPieces[PieceType.WhiteRook].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(7, 0).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(7, 0).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(7, 0).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (7, 0),
                                          PieceType.WhiteRook),
                               )
@@ -88,51 +79,43 @@ class Chess(Sprite):
         self.board.get_tile_at((7, 0)).set_piece(PieceType.WhiteRook)
 
         self.black_pieces.add(ChessPiece(pieces.chessPieces[PieceType.BlackRook].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(0, 7).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(0, 7).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(0, 7).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (0, 7),
                                          PieceType.BlackRook),
                               ChessPiece(pieces.chessPieces[PieceType.BlackKnight].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(1, 7).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(1, 7).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(1, 7).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (1, 7),
                                          PieceType.BlackKnight),
                               ChessPiece(self.pieces.chessPieces[PieceType.BlackBishop].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(2, 7).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(2, 7).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(2, 7).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (2, 7),
                                          PieceType.BlackBishop),
                               ChessPiece(self.pieces.chessPieces[PieceType.BlackQueen].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(3, 7).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(3, 7).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(3, 7).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (3, 7),
                                          PieceType.BlackQueen),
                               ChessPiece(self.pieces.chessPieces[PieceType.BlackKing].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(4, 7).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(4, 7).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(4, 7).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (4, 7),
                                          PieceType.BlackKing),
                               ChessPiece(self.pieces.chessPieces[PieceType.BlackBishop].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(5, 7).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(5, 7).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(5, 7).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (5, 7),
                                          PieceType.BlackBishop),
                               ChessPiece(self.pieces.chessPieces[PieceType.BlackKnight].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(6, 7).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(6, 7).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(6, 7).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (6, 7),
                                          PieceType.BlackKnight),
                               ChessPiece(self.pieces.chessPieces[PieceType.BlackRook].image,  # type: ignore
-                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(7, 7).centerx - dist,
-                                                          self.board.convert_coordinates_to_board(7, 7).centery - dist,
-                                                          pieceSize, pieceSize),
+                                         pygame.rect.Rect(self.board.convert_coordinates_to_board(7, 7).topleft,
+                                                          (pieceSize, pieceSize)),
                                          (7, 7),
                                          PieceType.BlackRook),
                               )
@@ -147,16 +130,14 @@ class Chess(Sprite):
 
         for i in range(0, 8):
             self.white_pieces.add(ChessPiece(self.pieces.chessPieces[PieceType.WhitePawn].image,  # type: ignore
-                                             pygame.rect.Rect(self.board.convert_coordinates_to_board(i, 1).centerx - dist,
-                                                              self.board.convert_coordinates_to_board(i, 1).centery - dist,
-                                                              pieceSize, pieceSize),
+                                             pygame.rect.Rect(self.board.convert_coordinates_to_board(i, 1).topleft,
+                                                              (pieceSize, pieceSize)),
                                              (i, 1),
                                              PieceType.WhitePawn))
             self.board.get_tile_at((i, 1)).set_piece(PieceType.WhitePawn)
             self.black_pieces.add(ChessPiece(self.pieces.chessPieces[PieceType.BlackPawn].image,  # type: ignore
-                                             pygame.rect.Rect(self.board.convert_coordinates_to_board(i, 6).centerx - dist,
-                                                              self.board.convert_coordinates_to_board(i, 6).centery - dist,
-                                                              pieceSize, pieceSize),
+                                             pygame.rect.Rect(self.board.convert_coordinates_to_board(i, 6).topleft,
+                                                              (pieceSize, pieceSize)),
                                              (i, 6),
                                              PieceType.BlackPawn))
             self.board.get_tile_at((i, 6)).set_piece(PieceType.BlackPawn)
@@ -167,17 +148,15 @@ class Chess(Sprite):
 
     def draw(self):
         self.board.draw(self.surface)
-        self.white_pieces.draw(self.surface)
-        self.black_pieces.draw(self.surface)
-        # for piece in self.white_pieces:
-        #     piece.draw(self.surface)
-        # for piece in self.black_pieces:
-        #     piece.draw(self.surface)
+        for piece in self.white_pieces:
+            piece.draw(self.surface)
+        for piece in self.black_pieces:
+            piece.draw(self.surface)
 
     def run(self):
         self.running = True
         pieceSelected = False
-        clicked_sprites = None
+        clicked_sprite: ChessPiece = None
         while self.running:
             # events
             for event in pygame.event.get():
@@ -186,17 +165,16 @@ class Chess(Sprite):
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left mouse button
                     mouse_pos = pygame.mouse.get_pos()
                     if not pieceSelected:
-                        clicked_sprites = [s for s in self.white_pieces if s.rect.collidepoint(mouse_pos)]
-                        if len(clicked_sprites) > 0:
+                        clicked_sprite = [s for s in self.white_pieces if s.rect.collidepoint(mouse_pos)][0]
+                        if clicked_sprite is not None:
                             pieceSelected = True
-                        for sprite in clicked_sprites:
-                            print("Sprite clicked: ", sprite.pieceType)
+                            print("clicke piece is of type: " + str(clicked_sprite.pieceType))
                     if pieceSelected:
-                        possible_moves = ChessPieces.get_possible_moves(clicked_sprites[0], self.board)
-                        clicked_tile_sprite = [s for s in self.board.boardTiles if s.rect.collidepoint(mouse_pos)]
-                        if len(clicked_tile_sprite) > 0:
-                            if possible_moves.count(clicked_tile_sprite[0]) > 0:
-                                print("moved away")
+                        possible_moves = ChessPieces.get_possible_moves(clicked_sprite, self.board)
+                        clicked_tile_sprite = [s for s in self.board.boardTiles if s.rect.collidepoint(mouse_pos)][0]
+                        if clicked_tile_sprite is not None:
+                            if possible_moves.count(clicked_tile_sprite) > 0:
+                                clicked_sprite.move(clicked_tile_sprite.get_pos()[0], clicked_tile_sprite.get_pos()[1], self.board)
 
             # update
             self.update()
