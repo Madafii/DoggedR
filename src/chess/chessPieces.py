@@ -44,12 +44,18 @@ class ChessPieces:
     @staticmethod
     def get_possible_moves(chesspiece: ChessPiece, chessboard: ChessBoard) -> list[ChessTile]:
         possibleMoves: list[ChessTile] = list()
+        x = chesspiece.posX
+        y = chesspiece.posY
         if chesspiece.pieceType == PieceType.WhitePawn:
-            x = chesspiece.posX
-            y = chesspiece.posY
+            if chessboard.get_tile_at((x, y + 1)).occupied is None:
+                possibleMoves.append(chessboard.get_tile_at((x, y + 1)))
             if y == 1:
-                if chessboard.get_tile_at((x, y + 1)).occupied is None:
-                    possibleMoves.append(chessboard.get_tile_at((x, y + 1)))
                 if chessboard.get_tile_at((x, y + 2)).occupied is None:
                     possibleMoves.append(chessboard.get_tile_at((x, y + 2)))
+        if chesspiece.pieceType == PieceType.BlackPawn:
+            if chessboard.get_tile_at((x, y - 1)).occupied is None:
+                possibleMoves.append(chessboard.get_tile_at((x, y - 1)))
+            if y == 6:
+                if chessboard.get_tile_at((x, y - 2)).occupied is None:
+                    possibleMoves.append(chessboard.get_tile_at((x, y - 2)))
         return possibleMoves

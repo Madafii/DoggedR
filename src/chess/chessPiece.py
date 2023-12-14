@@ -8,7 +8,7 @@ from src.chess.chessBoard import ChessBoard
 class ChessPiece(Sprite):
     def __init__(self, image: Surface, rect: Rect, pos: tuple[int, int], piecetype: PieceType):
         """
-        :param rect: the ChessTile in which ChessPiece is placed
+        :param rect: the ChessTile_rect in which ChessPiece is placed
         :param pos: pos in form of (0, 0), (0, 1)...
         """
         super().__init__()

@@ -18,12 +18,22 @@ class ChessTile(Sprite):
         self.rect = rect
         self._pos = pos
         self.occupied = None
+        self.selected = False
 
     def set_piece(self, piecetype: PieceType = None):
         self.occupied = piecetype
 
     def get_pos(self) -> tuple[int, int]:
         return self._pos
+
+    def draw_selected(self, surface):
+        self.image.set_alpha(128, pygame.SRCALPHA)
+        pygame.draw.circle(surface, (128, 128, 128), self.rect.center, self.rect.height / 4)
+
+    def draw(self, surface: Surface):
+        surface.blit(self.image, self.rect)
+        if self.selected:
+            self.draw_selected(surface)
 
 
 class ChessBoard:
@@ -65,10 +75,15 @@ class ChessBoard:
     def get_tile_at(self, index: tuple[int, int]) -> ChessTile:
         return list(self.boardTiles)[index[0] + index[1] * self.boardNumTiles]
 
+    def change_piece_pos(self, from_tile: ChessTile, to_tile: ChessTile, chess_piece):
+        from_tile.occupied = None
+        to_tile.occupied = chess_piece.pieceType
+        chess_piece.move(to_tile.get_pos()[0], to_tile.get_pos()[1], self)
+
     def update(self, surface: Surface):
         pass
 
     # no idea why need **kwargs
     def draw(self, surface: Surface, **kwargs):
         for tile in self.boardTiles:
-            surface.blit(tile.image, tile.rect)
+            tile.draw(surface)

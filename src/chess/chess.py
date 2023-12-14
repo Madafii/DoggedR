@@ -22,7 +22,7 @@ class Chess(Sprite):
         self.black_pieces: Group[ChessPiece] = Group()
         # place pieces to starting position
         self.setup_default_chess_game(self.pieces)
-        self.all_pieces = self.white_pieces.add(self.black_pieces)  # type: ignore
+        # self.all_pieces = self.white_pieces.add(self.black_pieces)  # type: ignore
 
     def setup_default_chess_game(self, pieces: ChessPieces):
         # set coordinates (0, 0) = bottom, left (7, 7) = top, right
@@ -156,7 +156,8 @@ class Chess(Sprite):
     def run(self):
         self.running = True
         pieceSelected = False
-        clicked_sprite: ChessPiece = None
+        whitesTurn = True
+        clicked_piece_sprite = None
         while self.running:
             # events
             for event in pygame.event.get():
@@ -165,16 +166,31 @@ class Chess(Sprite):
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left mouse button
                     mouse_pos = pygame.mouse.get_pos()
                     if not pieceSelected:
-                        clicked_sprite = [s for s in self.white_pieces if s.rect.collidepoint(mouse_pos)][0]
-                        if clicked_sprite is not None:
+                        if whitesTurn:
+                            clicked_piece_sprite = [s for s in self.white_pieces if s.rect.collidepoint(mouse_pos)]
+                        elif not whitesTurn:
+                            clicked_piece_sprite = [s for s in self.black_pieces if s.rect.collidepoint(mouse_pos)]
+                        clicked_piece_sprite = clicked_piece_sprite[0] if clicked_piece_sprite else None
+                        if clicked_piece_sprite is not None:
                             pieceSelected = True
-                            print("clicke piece is of type: " + str(clicked_sprite.pieceType))
+                            print("clicke piece is of type: " + str(clicked_piece_sprite.pieceType))
                     if pieceSelected:
-                        possible_moves = ChessPieces.get_possible_moves(clicked_sprite, self.board)
-                        clicked_tile_sprite = [s for s in self.board.boardTiles if s.rect.collidepoint(mouse_pos)][0]
+                        possible_moves = ChessPieces.get_possible_moves(clicked_piece_sprite, self.board)
+                        for posMoves in possible_moves:
+                            posMoves.selected = True
+                        clicked_tile_sprite = [s for s in self.board.boardTiles if s.rect.collidepoint(mouse_pos)]
+                        clicked_tile_sprite = clicked_tile_sprite[0] if clicked_tile_sprite else None
                         if clicked_tile_sprite is not None:
                             if possible_moves.count(clicked_tile_sprite) > 0:
-                                clicked_sprite.move(clicked_tile_sprite.get_pos()[0], clicked_tile_sprite.get_pos()[1], self.board)
+                                # reset turn for other player and change tile and piece Properties
+                                current_tile = self.board.get_tile_at(clicked_piece_sprite.pos)
+                                self.board.change_piece_pos(current_tile, clicked_tile_sprite, clicked_piece_sprite)
+                                pieceSelected = False
+                                whitesTurn = not whitesTurn
+                                clicked_piece_sprite = None
+
+                                for posMoves in possible_moves:
+                                    posMoves.selected = False
 
             # update
             self.update()
