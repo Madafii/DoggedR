@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite, Group
 
-from src.chess.chessPieces import ChessPieces
+from src.chess.chessPieces import ChessPieces, is_white_piece
 from src.chess.chessPiece import ChessPiece
 from src.chess.chessBoard import ChessBoard, ChessTile
 from src.chess.pieceType import PieceType
@@ -165,6 +165,7 @@ class Chess(Sprite):
                     self.stop()
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left mouse button
                     mouse_pos = pygame.mouse.get_pos()
+                    # if no ChessPiece is selected
                     if not pieceSelected:
                         if whitesTurn:
                             clicked_piece_sprite = [s for s in self.white_pieces if s.rect.collidepoint(mouse_pos)]
@@ -175,20 +176,43 @@ class Chess(Sprite):
                             pieceSelected = True
                             print("clicke piece is of type: " + str(clicked_piece_sprite.pieceType))
                     if pieceSelected:
+                        # mark possible moves on ChessBoard
                         possible_moves = ChessPieces.get_possible_moves(clicked_piece_sprite, self.board)
                         for posMoves in possible_moves:
                             posMoves.selected = True
                         clicked_tile_sprite = [s for s in self.board.boardTiles if s.rect.collidepoint(mouse_pos)]
                         clicked_tile_sprite = clicked_tile_sprite[0] if clicked_tile_sprite else None
+                        # clicked on a tile
                         if clicked_tile_sprite is not None:
+                            # if own color selects a new piece switch to that piece
+                            if clicked_tile_sprite.occupied is not None:
+                                if whitesTurn and is_white_piece(clicked_tile_sprite.occupied):
+                                    clicked_piece_sprite = [s for s in self.white_pieces if
+                                                            s.rect.collidepoint(mouse_pos)]
+                                if not whitesTurn and not is_white_piece(clicked_tile_sprite.occupied):
+                                    clicked_piece_sprite = [s for s in self.black_pieces if
+                                                            s.rect.collidepoint(mouse_pos)]
+                                clicked_piece_sprite = clicked_piece_sprite[0] if clicked_piece_sprite else None
+                                # reset possible moves
+                                for posMoves in possible_moves:
+                                    posMoves.selected = False
+                                # dont know why but sometimes no sprite is selected (should not happen) so just skip and
+                                # unselect currently selected piece
+                                if clicked_piece_sprite is None:
+                                    pieceSelected = False
+                                    continue
+                                possible_moves = ChessPieces.get_possible_moves(clicked_piece_sprite, self.board)
+                                for posMoves in possible_moves:
+                                    posMoves.selected = True
+                                print('switched selected piece to: ' + str(clicked_piece_sprite.pieceType))
+                            # a possible move got selected
                             if possible_moves.count(clicked_tile_sprite) > 0:
-                                # reset turn for other player and change tile and piece Properties
+                                # reset turn for other player and change tile and piece properties
                                 current_tile = self.board.get_tile_at(clicked_piece_sprite.pos)
                                 self.board.change_piece_pos(current_tile, clicked_tile_sprite, clicked_piece_sprite)
                                 pieceSelected = False
                                 whitesTurn = not whitesTurn
                                 clicked_piece_sprite = None
-
                                 for posMoves in possible_moves:
                                     posMoves.selected = False
 

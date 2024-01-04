@@ -1,14 +1,24 @@
 import os
 import pygame.image
+from pygame.sprite import Group
+
 from src.chess.chessPiece import ChessPiece
 from src.chess.chessBoard import ChessBoard, ChessTile
 from src.chess.pieceType import PieceType
 
 
-class ChessPieces:
+def is_white_piece(piecetype: PieceType):
+    if piecetype.value < 6:
+        return True
+    else:
+        return False
+
+
+class ChessPieces(Group):
     colorkeyDefault = (255, 174, 201)  # colorkey is pink
 
     def __init__(self, filename):
+        super().__init__()
         self.pieceSize = 50
         self.chessPiecesImage = self.load_pieces_image(os.path.join('Utils\\Images\\chess', filename))
         self.chessPieces = self.load_pieces()
@@ -33,10 +43,16 @@ class ChessPieces:
         return pieces
 
     def get_black_pieces(self):
-        pass
+        black_pieces = list()
+        for i in range(6, 12):
+            black_pieces.append(self.chessPieces[(PieceType(i))])
+        return black_pieces
 
     def get_white_pieces(self):
-        pass
+        white_pieces = list()
+        for i in range(0, 6):
+            white_pieces.append(self.chessPieces[(PieceType(i))])
+        return white_pieces
 
     def get_pieces(self) -> dict:
         pass
