@@ -152,6 +152,7 @@ class Chess(Sprite):
             piece.draw(self.surface)
         for piece in self.black_pieces:
             piece.draw(self.surface)
+        self.board.draw_selected(self.surface)
 
     def run(self):
         self.running = True
@@ -177,7 +178,7 @@ class Chess(Sprite):
                             print("clicke piece is of type: " + str(clicked_piece_sprite.pieceType))
                     if pieceSelected:
                         # mark possible moves on ChessBoard
-                        possible_moves = ChessPieces.get_possible_moves(clicked_piece_sprite, self.board)
+                        possible_moves = self.pieces.get_possible_moves(clicked_piece_sprite, self.board)
                         for posMoves in possible_moves:
                             posMoves.selected = True
                         clicked_tile_sprite = [s for s in self.board.boardTiles if s.rect.collidepoint(mouse_pos)]
@@ -185,7 +186,8 @@ class Chess(Sprite):
                         # clicked on a tile
                         if clicked_tile_sprite is not None:
                             # if own color selects a new piece switch to that piece
-                            if clicked_tile_sprite.occupied is not None:
+                            if clicked_tile_sprite.occupied is not None and \
+                                    whitesTurn is is_white_piece(clicked_tile_sprite.occupied):
                                 if whitesTurn and is_white_piece(clicked_tile_sprite.occupied):
                                     clicked_piece_sprite = [s for s in self.white_pieces if
                                                             s.rect.collidepoint(mouse_pos)]
@@ -201,14 +203,14 @@ class Chess(Sprite):
                                 if clicked_piece_sprite is None:
                                     pieceSelected = False
                                     continue
-                                possible_moves = ChessPieces.get_possible_moves(clicked_piece_sprite, self.board)
+                                possible_moves = self.pieces.get_possible_moves(clicked_piece_sprite, self.board)
                                 for posMoves in possible_moves:
                                     posMoves.selected = True
                                 print('switched selected piece to: ' + str(clicked_piece_sprite.pieceType))
                             # a possible move got selected
                             if possible_moves.count(clicked_tile_sprite) > 0:
                                 # reset turn for other player and change tile and piece properties
-                                current_tile = self.board.get_tile_at(clicked_piece_sprite.pos)
+                                current_tile = self.board.get_tile_at((clicked_piece_sprite.posX, clicked_piece_sprite.posY))
                                 self.board.change_piece_pos(current_tile, clicked_tile_sprite, clicked_piece_sprite)
                                 pieceSelected = False
                                 whitesTurn = not whitesTurn

@@ -27,13 +27,12 @@ class ChessTile(Sprite):
         return self._pos
 
     def draw_selected(self, surface):
-        self.image.set_alpha(128, pygame.SRCALPHA)
-        pygame.draw.circle(surface, (128, 128, 128), self.rect.center, self.rect.height / 4)
+        if self.selected:
+            self.image.set_alpha(128, pygame.SRCALPHA)
+            pygame.draw.circle(surface, (128, 128, 128), self.rect.center, self.rect.height / 4)
 
     def draw(self, surface: Surface):
         surface.blit(self.image, self.rect)
-        if self.selected:
-            self.draw_selected(surface)
 
 
 class ChessBoard:
@@ -60,6 +59,8 @@ class ChessBoard:
                     pygame.rect.Rect(0 + (i + j) % 2 * tileSize, 0, tileSize, tileSize)),
                     pygame.rect.Rect(self.convert_coordinates_to_board(j, i).topleft, (tileSize, tileSize)),
                     (j, i)))
+        # added empty Tile for invalid position with pos in (-1, -1)
+        self.boardTiles.add(ChessTile(Surface((0, 0)), pygame.rect.Rect(0, 0, 0, 0), (-1, -1)))   # type: ignore
 
     def convert_coordinates_to_board(self, x, y) -> pygame.rect.Rect:
         """
@@ -73,7 +74,10 @@ class ChessBoard:
         return rect
 
     def get_tile_at(self, index: tuple[int, int]) -> ChessTile:
-        return list(self.boardTiles)[index[0] + index[1] * self.boardNumTiles]
+        indexTile = index[0] + index[1] * self.boardNumTiles
+        if index[0] >= self.boardNumTiles or index[1] >= self.boardNumTiles or index[0] < 0 or index[1] < 0:
+            return list(self.boardTiles)[self.boardNumTiles + self.boardNumTiles * (self.boardNumTiles - 1)]
+        return list(self.boardTiles)[indexTile]
 
     def change_piece_pos(self, from_tile: ChessTile, to_tile: ChessTile, chess_piece):
         from_tile.occupied = None
@@ -87,3 +91,8 @@ class ChessBoard:
     def draw(self, surface: Surface, **kwargs):
         for tile in self.boardTiles:
             tile.draw(surface)
+
+    # shit solution?
+    def draw_selected(self, surface: Surface):
+        for tile in self.boardTiles:
+            tile.draw_selected(surface)

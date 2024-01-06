@@ -17,7 +17,6 @@ class ChessPiece(Sprite):
         self.boardRect = rect
         self.rect = Rect((self.boardRect.centerx - self.imageSize / 2, self.boardRect.centery - self.imageSize / 2),
                          (self.imageSize, self.imageSize))
-        self.pos = pos
         self.posX = pos[0]
         self.posY = pos[1]
         self.pieceType = piecetype
