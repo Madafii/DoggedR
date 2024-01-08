@@ -77,6 +77,12 @@ class ChessPieces(Group):
     def get_pieces(self) -> dict:
         pass
 
+    def is_king_checked(self, chesspiece: ChessPiece, chessboard: ChessBoard):
+        kingsInPossibleMoves = [s for s in self.get_possible_moves(chesspiece, chessboard) if
+                                s.occupied == PieceType.BlackKing or s.occupied == PieceType.WhiteKing]
+        if len(kingsInPossibleMoves) > 0:
+            return True
+
     def get_possible_moves(self, chesspiece: ChessPiece, chessboard: ChessBoard) -> list[ChessTile]:
         possibleMoves: list[ChessTile] = list()
         x = chesspiece.posX
@@ -131,3 +137,35 @@ class ChessPieces(Group):
                 nextPos = chessboard.get_tile_at((x + dx, y + dy))
                 is_pos_possible(possibleMoves, nextPos, is_white_piece(chesspiece.pieceType))
         return possibleMoves
+
+    def filter_possible_moves_on_check(self, blackchesspieces, whitechesspieces, chessboard: ChessBoard,
+                                       possiblemoves: list[ChessTile], chesspiece : ChessPiece, whitesturn: bool):
+        print("king is checked")
+        illegal_moves = list()
+        for move in possiblemoves:
+            dummyTile = chessboard.get_tile_at((move.get_pos()[0], move.get_pos()[1]))
+            tmpDummyTileType = dummyTile.occupied
+            dummyTile.occupied = chesspiece.pieceType
+            previousTile = chessboard.get_tile_at((chesspiece.posX, chesspiece.posY))
+            previousTile.occupied = None
+            for piece in blackchesspieces:
+                if (piece.posX, piece.posY) == dummyTile.get_pos():
+                    continue
+                if self.is_king_checked(piece, chessboard):
+                    illegal_moves.append(move)
+                    break
+            for piece in whitechesspieces:
+                if (piece.posX, piece.posY) == dummyTile.get_pos():
+                    continue
+                if self.is_king_checked(piece, chessboard):
+                    illegal_moves.append(move)
+                    break
+            dummyTile.occupied = tmpDummyTileType
+            previousTile.occupied = chesspiece.pieceType
+        for move in illegal_moves:
+            possiblemoves.remove(move)
+
+
+
+
+

@@ -158,6 +158,7 @@ class Chess(Sprite):
         self.running = True
         pieceSelected = False
         whitesTurn = True
+        checked = False
         clicked_piece_sprite = None
         while self.running:
             # events
@@ -179,6 +180,9 @@ class Chess(Sprite):
                     if pieceSelected:
                         # mark possible moves on ChessBoard
                         possible_moves = self.pieces.get_possible_moves(clicked_piece_sprite, self.board)
+                        self.pieces.filter_possible_moves_on_check(self.black_pieces, self.white_pieces, self.board,
+                                                                   possible_moves, clicked_piece_sprite,
+                                                                   is_white_piece(clicked_piece_sprite.pieceType))
                         for posMoves in possible_moves:
                             posMoves.selected = True
                         clicked_tile_sprite = [s for s in self.board.boardTiles if s.rect.collidepoint(mouse_pos)]
@@ -204,14 +208,36 @@ class Chess(Sprite):
                                     pieceSelected = False
                                     continue
                                 possible_moves = self.pieces.get_possible_moves(clicked_piece_sprite, self.board)
+                                self.pieces.filter_possible_moves_on_check(self.black_pieces, self.white_pieces,
+                                                                           self.board,
+                                                                           possible_moves, clicked_piece_sprite,
+                                                                           is_white_piece(
+                                                                               clicked_piece_sprite.pieceType))
                                 for posMoves in possible_moves:
                                     posMoves.selected = True
                                 print('switched selected piece to: ' + str(clicked_piece_sprite.pieceType))
                             # a possible move got selected
                             if possible_moves.count(clicked_tile_sprite) > 0:
+                                # a piece got captured
+                                if clicked_tile_sprite.occupied is not None:
+                                    # remove piece that got captured
+                                    if whitesTurn:
+                                        captured_piece_sprite = [s for s in self.black_pieces if
+                                                                 s.rect.collidepoint(mouse_pos)]
+                                        captured_piece_sprite = captured_piece_sprite[0] if \
+                                            captured_piece_sprite else None
+                                        self.black_pieces.remove(captured_piece_sprite)
+                                    if not whitesTurn:
+                                        captured_piece_sprite = [s for s in self.white_pieces if
+                                                                 s.rect.collidepoint(mouse_pos)]
+                                        captured_piece_sprite = captured_piece_sprite[0] if \
+                                            captured_piece_sprite else None
+                                        self.white_pieces.remove(captured_piece_sprite)
                                 # reset turn for other player and change tile and piece properties
-                                current_tile = self.board.get_tile_at((clicked_piece_sprite.posX, clicked_piece_sprite.posY))
+                                current_tile = self.board.get_tile_at(
+                                    (clicked_piece_sprite.posX, clicked_piece_sprite.posY))
                                 self.board.change_piece_pos(current_tile, clicked_tile_sprite, clicked_piece_sprite)
+                                checked = self.pieces.is_king_checked(clicked_piece_sprite, self.board)
                                 pieceSelected = False
                                 whitesTurn = not whitesTurn
                                 clicked_piece_sprite = None
