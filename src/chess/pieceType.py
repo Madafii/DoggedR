@@ -13,4 +13,4 @@ class PieceType(Enum):
     BlackBishop = 8
     BlackRook = 9
     BlackKing = 10
-    BlackQueen = 11
+    BlackQueen = 11 

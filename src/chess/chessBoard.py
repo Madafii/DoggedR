@@ -4,7 +4,7 @@ import pygame.image
 from pygame.surface import Surface
 from pygame.sprite import Sprite, Group
 from src.chess.pieceType import PieceType
-
+# from src.chess.chessPiece import ChessPiece
 
 class ChessTile(Sprite):
     def __init__(self, image: Surface, rect: pygame.rect.Rect, pos: tuple[int, int]):
@@ -48,7 +48,7 @@ class ChessBoard:
         self.setup_board()
 
     def load_board_tiles(self, filename) -> Surface:
-        image = pygame.image.load(os.path.join('Utils\\Images\\chess', filename)).convert()
+        image = pygame.image.load(os.path.join('Utils/Images/chess', filename)).convert()
         return image
 
     def setup_board(self):

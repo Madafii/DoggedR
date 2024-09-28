@@ -40,7 +40,7 @@ class ChessPieces(Group):
     def __init__(self, filename):
         super().__init__()
         self.pieceSize = 50
-        self.chessPiecesImage = self.load_pieces_image(os.path.join('Utils\\Images\\chess', filename))
+        self.chessPiecesImage = self.load_pieces_image(os.path.join('Utils/Images/chess', filename))
         self.chessPieces = self.load_pieces()
 
     def load_pieces_image(self, filename, colorkey=colorkeyDefault):
@@ -78,12 +78,30 @@ class ChessPieces(Group):
         pass
 
     def is_king_checked(self, chesspiece: ChessPiece, chessboard: ChessBoard):
-        kingsInPossibleMoves = [s for s in self.get_possible_moves(chesspiece, chessboard) if
+        kingsInPossibleMoves = [s for s in self.get_possible_moves(chesspiece, chessboard, [False, False], [False, False]) if
                                 s.occupied == PieceType.BlackKing or s.occupied == PieceType.WhiteKing]
         if len(kingsInPossibleMoves) > 0:
             return True
+        return False
+        
+    def checkmate(self, chessPiecesWhite, chessPiecesBlack, chessBoard, whitesTurn):
+        if whitesTurn:
+            chessPieces = chessPiecesWhite
+        else:
+            chessPieces = chessPiecesBlack
+        for piece in chessPieces:
+            possibleMoves = self.get_possible_moves(piece, chessBoard, [False, False], [False, False])
+            if whitesTurn:
+                self.filter_possible_moves_on_check(chessPiecesBlack, chessPiecesWhite, chessBoard, possibleMoves, piece)
+            else:
+                self.filter_possible_moves_on_check(chessPiecesBlack, chessPiecesWhite, chessBoard, possibleMoves, piece)
+            if len(possibleMoves) > 0:
+                print(str(piece.pieceType) + " still has possible moves")
+                print(possibleMoves)
+                return False
+        return True
 
-    def get_possible_moves(self, chesspiece: ChessPiece, chessboard: ChessBoard) -> list[ChessTile]:
+    def get_possible_moves(self, chesspiece: ChessPiece, chessboard: ChessBoard, castlingWhitePossible, castlingBlackPossible) -> list[ChessTile]:
         possibleMoves: list[ChessTile] = list()
         x = chesspiece.posX
         y = chesspiece.posY
@@ -136,11 +154,29 @@ class ChessPieces(Group):
             for dx, dy in directions:
                 nextPos = chessboard.get_tile_at((x + dx, y + dy))
                 is_pos_possible(possibleMoves, nextPos, is_white_piece(chesspiece.pieceType))
+            # castling logic 
+            if (chesspiece.pieceType == PieceType.BlackKing and (castlingBlackPossible[0] or castlingBlackPossible[1])):
+                if (castlingBlackPossible[0]): 
+                    if chessboard.get_tile_at((x - 1, y)).occupied is None:
+                        if chessboard.get_tile_at((x - 2, y)).occupied is None:
+                            possibleMoves.append(chessboard.get_tile_at((x - 2, y)))
+                if (castlingBlackPossible[1]):
+                    if chessboard.get_tile_at((x + 1, y)).occupied is None:
+                        if chessboard.get_tile_at((x + 2, y)).occupied is None:
+                            possibleMoves.append(chessboard.get_tile_at((x + 2, y)))
+            if (chesspiece.pieceType == PieceType.WhiteKing and (castlingWhitePossible[0] or castlingWhitePossible[1])):
+                if (castlingWhitePossible[0]): 
+                    if chessboard.get_tile_at((x - 1, y)).occupied is None:
+                        if chessboard.get_tile_at((x - 2, y)).occupied is None:
+                            possibleMoves.append(chessboard.get_tile_at((x - 2, y)))
+                if (castlingWhitePossible[1]):
+                    if chessboard.get_tile_at((x + 1, y)).occupied is None:
+                        if chessboard.get_tile_at((x + 2, y)).occupied is None:
+                            possibleMoves.append(chessboard.get_tile_at((x + 2, y)))
         return possibleMoves
 
     def filter_possible_moves_on_check(self, blackchesspieces, whitechesspieces, chessboard: ChessBoard,
-                                       possiblemoves: list[ChessTile], chesspiece : ChessPiece, whitesturn: bool):
-        print("king is checked")
+                                       possiblemoves: list[ChessTile], chesspiece : ChessPiece):
         illegal_moves = list()
         for move in possiblemoves:
             dummyTile = chessboard.get_tile_at((move.get_pos()[0], move.get_pos()[1]))
