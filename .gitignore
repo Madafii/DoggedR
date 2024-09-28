@@ -8,5 +8,6 @@
 /dataSources.local.xml
 
 __pycache__/
+.idea/
 .vscode/
 pygame-env/
